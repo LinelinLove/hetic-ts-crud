@@ -5,3 +5,8 @@ header {
   height: 50px;
   background-color: powderblue;
 }
+
+header h2 {
+  user-select: none;
+  cursor: pointer;
+}

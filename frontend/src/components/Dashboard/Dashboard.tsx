@@ -27,7 +27,7 @@ export default function Dashboard() {
     }
 
     fetchData();
-  }, []);
+  }, [result]);
 
   const handleDownload = async (id: number, name_file: string) => {
     try {
