@@ -3,9 +3,9 @@ import PDFDocument from "pdfkit";
 function subtotal(price: number, quantity: number, tva: number): number {
   // price est en HT
   // on rajoute la TVA pour le prix TTC
-  const tvaPercent = tva / 100;
-  const totalTva = price * tvaPercent;
-  return (price + totalTva) * quantity;
+  const tvaPercent = Number(tva) / 100;
+  const totalTva = Number(price) * tvaPercent;
+  return (Number(price) + totalTva) * Number(quantity);
 }
 export function buildPDF(
   dataCallback: any,
@@ -50,7 +50,7 @@ export function buildPDF(
   doc.fontSize(16).text(`${name}`);
   //
   doc.fontSize(16).text(`Prix unitaire HT`);
-  doc.fontSize(16).text(`${price.toFixed(2)}`);
+  doc.fontSize(16).text(`${Number(price.toFixed(2))}`);
   //
   doc.fontSize(16).text(`Quantité`);
   doc.fontSize(16).text(`${quantity}`);
@@ -59,7 +59,7 @@ export function buildPDF(
   doc.fontSize(16).text(`${tva}`);
   //
   doc.fontSize(16).text(`Prix HT`);
-  doc.fontSize(16).text(`${(price * quantity).toFixed(2)}`);
+  doc.fontSize(16).text(`${Number((price * quantity).toFixed(2))}`);
   //
   doc.fontSize(16).text(`TOTAL TTC`);
   doc.fontSize(16).text(`${totalPrice.toFixed(2)}`);

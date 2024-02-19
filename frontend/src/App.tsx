@@ -13,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/create" element={<Form />} />
+        <Route path="/edit/:id" element={<Form />} />
       </Routes>
       <Footer />
     </Router>

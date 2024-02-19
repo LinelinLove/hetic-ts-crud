@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Dashboard.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   const [result, setResult] = useState<any[]>([]);
 
   useEffect(() => {
@@ -59,13 +61,17 @@ export default function Dashboard() {
     }
   };
 
+  const handleEdit = (id: string) => {
+    navigate(`/edit/${id}`);
+  };
+
   return (
     <div className="dashboard-container">
       <h1>Dashboard</h1>
       <Link to="/create">
         <button className="btn btn-primary">Créer une nouvelle facture</button>
       </Link>
-      <h2>Liste de vos factures</h2>
+      <h2>Liste de vos dernières factures</h2>
       <div className="list-container">
         <div className="list title">
           <p>Date</p>
@@ -86,7 +92,7 @@ export default function Dashboard() {
               <span className="button">
                 <i
                   className="fa-solid fa-pen"
-                  // onClick={() => handlePut(invoice.id)}
+                  onClick={() => handleEdit(invoice.id)}
                 ></i>{" "}
               </span>
               <span className="button" onClick={() => handleDelete(invoice.id)}>

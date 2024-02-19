@@ -1,23 +1,52 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import "./Form.css";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 export default function Form() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [result, setResult] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (id) {
+      async function fetchData() {
+        try {
+          const response = await fetch(`http://localhost:5050/invoice/${id}`, {
+            method: "GET",
+            mode: "cors",
+          });
+
+          if (!response.ok) {
+            throw new Error(`Request failed with status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          setResult(data.data);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      fetchData();
+    }
+  }, [id]);
+
   const [formData, setFormData] = useState({
-    id: "",
-    type: "",
-    firstname: "",
-    lastname: "",
-    address: "",
-    country: "",
-    town: "",
-    postal_code: "",
-    product: "",
-    price: "",
-    quantity: "",
-    tva: "",
-    pdf: "",
-    name_file: "",
+    id: result ? result.id : "",
+    type: result ? result.type : "",
+    firstname: result ? result.firstname : "",
+    lastname: result ? result.lastname : "",
+    address: result ? result.address : "",
+    country: result ? result.country : "",
+    town: result ? result.town : "",
+    postal_code: result ? result.postal_code : "",
+    product: result ? result.name : "",
+    price: result ? result.price : "",
+    quantity: result ? result.quantity : "",
+    tva: result ? result.tva : "",
+    pdf: result ? result.pdf : "",
+    name_file: result ? result.name_file : "",
   });
 
   const handleChange = (
@@ -28,9 +57,13 @@ export default function Form() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const url = result.id
+      ? `http://localhost:5050/invoice/${result.id}`
+      : "http://localhost:5050/invoices";
+
     try {
-      const response = await fetch("http://localhost:5050/invoices", {
-        method: "POST",
+      const response = await fetch(url, {
+        method: result.id ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -43,7 +76,8 @@ export default function Form() {
         throw new Error(`Request failed with status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
+      navigate("/");
     } catch (error) {
       console.error(error);
     }
@@ -52,7 +86,7 @@ export default function Form() {
   return (
     <>
       <div className="container">
-        <h1>Créer votre facture</h1>
+        <h1>{id ? "Modifier votre facture" : "Créer votre facture"}</h1>
 
         <div className="row" id="form-container">
           <form id="form" onSubmit={handleSubmit}>
@@ -65,7 +99,7 @@ export default function Form() {
                   name="type"
                   required
                   onChange={handleChange}
-                  defaultValue=""
+                  value={result ? result.type : ""}
                 >
                   <option value="" disabled>
                     Choix du type
@@ -89,6 +123,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="firstname"
+                  defaultValue={result ? result.firstname : ""}
                 />
               </div>
 
@@ -101,6 +136,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="lastname"
+                  defaultValue={result ? result.lastname : ""}
                 />
               </div>
             </div>
@@ -114,6 +150,7 @@ export default function Form() {
                 required
                 onChange={handleChange}
                 name="address"
+                defaultValue={result ? result.address : ""}
               />
             </div>
 
@@ -127,6 +164,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="country"
+                  defaultValue={result ? result.country : ""}
                 />
               </div>
 
@@ -137,7 +175,9 @@ export default function Form() {
                   className="form-control"
                   id="town"
                   required
+                  onChange={handleChange}
                   name="town"
+                  defaultValue={result ? result.town : ""}
                 />
               </div>
 
@@ -150,6 +190,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="postal_code"
+                  defaultValue={result ? result.postal_code : ""}
                 />
               </div>
             </div>
@@ -166,6 +207,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="name"
+                  defaultValue={result ? result.name : ""}
                 />
               </div>
 
@@ -178,6 +220,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="price"
+                  defaultValue={result ? result.price : ""}
                 />
               </div>
 
@@ -190,6 +233,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="quantity"
+                  defaultValue={result ? result.quantity : ""}
                 />
               </div>
 
@@ -202,6 +246,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="tva"
+                  defaultValue={result ? result.tva : ""}
                 />
               </div>
             </div>
