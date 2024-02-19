@@ -9,4 +9,11 @@ header {
 header h2 {
   user-select: none;
   cursor: pointer;
+  font-size: 28px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  font-size: inherit;
 }
