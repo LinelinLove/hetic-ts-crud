@@ -86,7 +86,7 @@ export default function Form() {
     const url = formData.id
       ? `http://localhost:5050/invoice/${formData.id}`
       : "http://localhost:5050/invoices";
-
+    console.log(formData.id);
     try {
       const response = await fetch(url, {
         method: formData.id ? "PUT" : "POST",
@@ -102,7 +102,7 @@ export default function Form() {
         throw new Error(`Request failed with status: ${response.status}`);
       }
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
       navigate("/");
     } catch (error) {
       console.error(error);

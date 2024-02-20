@@ -45,7 +45,6 @@ router.post("/invoices", async (req: Request, res: Response) => {
     const invoicePrice: number = Number(req.body.price);
     const invoiceQuantity: number = Number(req.body.quantity);
     const invoiceTva: number = Number(req.body.tva);
-    const invoicePdf: string = req.body.pdf;
 
     invoiceModel.createInvoice(
       invoiceId,
@@ -60,7 +59,6 @@ router.post("/invoices", async (req: Request, res: Response) => {
       invoicePrice,
       invoiceQuantity,
       invoiceTva,
-      invoicePdf,
       (error: Error, invoiceId: number) => {
         if (error) {
           console.error(error);
@@ -88,8 +86,6 @@ router.put("/invoice/:id", async (req: Request, res: Response) => {
   const invoicePrice: number = req.body.price;
   const invoiceQuantity: number = req.body.quantity;
   const invoiceTva: number = req.body.tva;
-  const invoicePdf: string = req.body.pdf;
-  const invoiceName_file: string = req.body.name_file;
 
   invoiceModel.updateInvoice(
     invoiceId,
@@ -104,13 +100,12 @@ router.put("/invoice/:id", async (req: Request, res: Response) => {
     invoicePrice,
     invoiceQuantity,
     invoiceTva,
-    invoicePdf,
     (error: Error) => {
       if (error) {
         return res.status(500).json({ message: error.message });
       }
 
-      return res.status(200).send();
+      return res.status(200).json({ Updated: invoiceId });
     }
   );
 });

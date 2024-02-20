@@ -12,7 +12,6 @@ interface Invoice {
   price: number;
   quantity: number;
   tva: number;
-  pdf: Buffer;
 }
 
 export default Invoice;
