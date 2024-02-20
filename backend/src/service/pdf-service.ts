@@ -22,8 +22,7 @@ export function buildPDF(
   price: number,
   quantity: number,
   tva: number,
-  pdf: string,
-  name_file: string
+  pdf: string
 ) {
   const totalPrice = subtotal(price, quantity, tva);
   const doc = new PDFDocument();

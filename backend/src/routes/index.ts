@@ -62,7 +62,6 @@ router.post("/invoices", async (req: Request, res: Response) => {
       invoiceQuantity,
       invoiceTva,
       invoicePdf,
-      invoiceName_file,
       (error: Error, invoiceId: number) => {
         if (error) {
           console.error(error);
@@ -107,7 +106,6 @@ router.put("/invoice/:id", async (req: Request, res: Response) => {
     invoiceQuantity,
     invoiceTva,
     invoicePdf,
-    invoiceName_file,
     (error: Error) => {
       if (error) {
         return res.status(500).json({ message: error.message });

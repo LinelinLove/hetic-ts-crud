@@ -29,7 +29,7 @@ export default function Dashboard() {
     fetchData();
   }, [result]);
 
-  const handleDownload = async (id: number, name_file: string) => {
+  const handleDownload = async (id: number, type: string) => {
     try {
       const response = await fetch(`http://localhost:5050/download/${id}`);
       const blob = await response.blob();
@@ -38,7 +38,7 @@ export default function Dashboard() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = name_file;
+      a.download = `${type}_${id.toString()}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -75,20 +75,25 @@ export default function Dashboard() {
       <div className="list-container">
         <div className="list title">
           <p>Date</p>
-          <p>Nom du fichier</p>
+          <p>Type</p>
+          <p>Client</p>
           <p>Actions</p>
         </div>
         {result.map((invoice) => (
           <div className="list" key={invoice.id}>
             <p>{new Date(invoice.date).toLocaleString()}</p>
-            <p
-              className="button"
-              onClick={() => handleDownload(invoice.id, invoice.name_file)}
-            >
-              {invoice.name_file}
+            <p>{invoice.type}</p>
+            <p>
+              {invoice.firstname} {invoice.lastname}
             </p>
 
             <div className="actions">
+              <span
+                className="button"
+                onClick={() => handleDownload(invoice.id, invoice.type)}
+              >
+                <i className="fa-solid fa-download"></i>
+              </span>
               <span className="button">
                 <i
                   className="fa-solid fa-pen"

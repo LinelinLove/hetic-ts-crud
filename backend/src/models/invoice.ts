@@ -18,11 +18,10 @@ export const createInvoice = (
   quantity: number,
   tva: number,
   pdf: string,
-  name_file: string,
   callback: Function
 ) => {
   const queryString =
-    "INSERT INTO invoice (type, firstname, lastname, address, country, town, postal_code, name, price, quantity, tva, pdf, name_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO invoice (type, firstname, lastname, address, country, town, postal_code, name, price, quantity, tva, pdf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   connection.query(
     queryString,
     [
@@ -38,7 +37,6 @@ export const createInvoice = (
       quantity,
       tva,
       pdf,
-      name_file,
     ],
     (error, result) => {
       // si erreur, on l'a donne au controller
@@ -70,20 +68,15 @@ export const createInvoice = (
           const pdfPath = `${pdfFileName}`;
           const pdfBuffer = Buffer.concat(chunks);
           fs.writeFileSync(pdfPath, pdfBuffer);
-          // Mise à jour de la colonne name_file dans la base de données
-          const updateQuery =
-            "UPDATE invoice SET name_file = ?, pdf = ? WHERE id = ?";
-          connection.query(
-            updateQuery,
-            [pdfFileName, pdfBuffer, inserId],
-            (updateError) => {
-              if (updateError) {
-                callback(updateError);
-              } else {
-                callback(null, inserId);
-              }
+          // Mise à jour de la colonne pdf dans la base de données
+          const updateQuery = "UPDATE invoice SET pdf = ? WHERE id = ?";
+          connection.query(updateQuery, [pdfBuffer, inserId], (updateError) => {
+            if (updateError) {
+              callback(updateError);
+            } else {
+              callback(null, inserId);
             }
-          );
+          });
         },
         inserId,
         type,
@@ -97,8 +90,7 @@ export const createInvoice = (
         price,
         quantity,
         tva,
-        pdf,
-        name_file
+        pdf
       );
 
       callback(null, inserId);
@@ -130,7 +122,6 @@ export const findOneInvoice = (invoiceId: number, callback: Function) => {
       quantity: row.quantity,
       tva: row.tva,
       pdf: row.pdf,
-      name_file: row.name_file,
     };
     // on le renvoie au callback le résultat
     callback(null, invoice);
@@ -162,7 +153,6 @@ export const findAllInvoices = (callback: Function) => {
         quantity: row.quantity,
         tva: row.tva,
         pdf: row.pdf,
-        name_file: row.name_file,
       };
       invoices.push(invoice);
     });
@@ -184,7 +174,6 @@ export const updateInvoice = (
   quantity: number,
   tva: number,
   pdf: string,
-  name_file: string,
   callback: Function
 ) => {
   // Construire le PDF
@@ -203,7 +192,7 @@ export const updateInvoice = (
 
       // Mettre à jour la base de données
       const updateQuery =
-        "UPDATE invoice SET type = ?, firstname = ?, lastname = ?, address = ?, country = ?, town = ?, postal_code = ?, name = ?, price = ?, quantity = ?, tva = ?, pdf = ?, name_file = ? WHERE id = ?";
+        "UPDATE invoice SET type = ?, firstname = ?, lastname = ?, address = ?, country = ?, town = ?, postal_code = ?, name = ?, price = ?, quantity = ?, tva = ?, pdf = ? WHERE id = ?";
       connection.query(
         updateQuery,
         [
@@ -219,7 +208,6 @@ export const updateInvoice = (
           quantity,
           tva,
           pdfFileName,
-          name_file,
           id,
         ],
         (updateError) => {
@@ -248,8 +236,7 @@ export const updateInvoice = (
     price,
     quantity,
     tva,
-    pdf,
-    name_file
+    pdf
   );
 };
 
