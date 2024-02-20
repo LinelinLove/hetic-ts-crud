@@ -1,8 +1,6 @@
 import PDFDocument from "pdfkit";
 
 function subtotal(price: number, quantity: number, tva: number): number {
-  // price est en HT
-  // on rajoute la TVA pour le prix TTC
   const tvaPercent = Number(tva) / 100;
   const totalTva = Number(price) * tvaPercent;
   return (Number(price) + totalTva) * Number(quantity);
@@ -26,39 +24,98 @@ export function buildPDF(
 ) {
   const totalPrice = subtotal(price, quantity, tva);
   const doc = new PDFDocument();
+
+  function generateHr(doc: PDFKit.PDFDocument, y: number) {
+    doc
+      .strokeColor("#aaaaaa")
+      .lineWidth(1)
+      .moveTo(50, y)
+      .lineTo(550, y)
+      .stroke();
+  }
+
+  function generateTableRow(
+    doc: PDFKit.PDFDocument,
+    y: number,
+    item: any,
+    price: any,
+    quantity: any,
+    tva: any,
+    price_ht: any,
+    price_ttc: any
+  ) {
+    doc
+      .fontSize(10)
+      .text(item, 50, y)
+      .text(price, 170, y)
+      .text(quantity, 200, y, { width: 90, align: "right" })
+      .text(price_ht, 250, y, { width: 90, align: "right" })
+      .text(tva, 350, y, { width: 90, align: "right" })
+      .text(price_ttc, 0, y, { align: "right" });
+  }
+
+  function generateFooter(doc: PDFKit.PDFDocument) {
+    doc
+      .fontSize(10)
+      .text("Le paiement est dû dans un délai de 15 jours.", 50, 780, {
+        align: "center",
+        width: 500,
+      });
+  }
+
   doc.on("data", dataCallback);
   doc.on("end", endCallback);
-  doc.fontSize(24).text(`${type} n°${id}`);
-  doc.fontSize(12).text(`Date ${new Date().toLocaleString()}`);
-  //
-  doc.fontSize(16).text(`Entreprise Company`);
-  doc.fontSize(12).text(`4 rue Ipsum`);
-  doc.fontSize(12).text(`LOREM 00000`);
-  doc.fontSize(12).text(`Tél : 01.66.66.66.66`);
-  //
-  doc.fontSize(16).text(`Informations du client`, { align: "right" });
-  doc.fontSize(14).text(`${firstname} ${lastname}`, { align: "right" });
-  doc.fontSize(14).text(`${address}`, { align: "right" });
-  doc.fontSize(14).text(`${postal_code}`, { align: "right" });
-  doc.fontSize(14).text(`${town}`, { align: "right" });
-  doc.fontSize(14).text(`${country}`, { align: "right" });
-  //
-  doc.fontSize(16).text(`Produit/service`);
-  doc.fontSize(16).text(`${name}`);
-  //
-  doc.fontSize(16).text(`Prix unitaire HT`);
-  doc.fontSize(16).text(`${Number(price.toFixed(2))}`);
-  //
-  doc.fontSize(16).text(`Quantité`);
-  doc.fontSize(16).text(`${quantity}`);
-  //
-  doc.fontSize(16).text(`TVA`);
-  doc.fontSize(16).text(`${tva}`);
-  //
-  doc.fontSize(16).text(`Prix HT`);
-  doc.fontSize(16).text(`${Number((price * quantity).toFixed(2))}`);
-  //
-  doc.fontSize(16).text(`TOTAL TTC`);
-  doc.fontSize(16).text(`${totalPrice.toFixed(2)}`);
+  doc
+    .fontSize(10)
+    .text(`Company Inc.`, { align: "right" })
+    .text(`4 rue Ipsum`, { align: "right" })
+    .text(`Paris, Ile-de-France, 75000`, { align: "right" })
+    .text(`Tél : 01.66.66.66.66`, { align: "right" });
+
+  doc
+    .fontSize(24)
+    .text(`${type} n°${id}`, 50, 120)
+    .fontSize(12)
+    .text(`Date ${new Date().toLocaleString()}`, 50, 155);
+
+  generateHr(doc, 185);
+
+  doc.fontSize(16).text(`Informations du client`, 50, 200);
+  doc
+    .fontSize(12)
+    .text(`${firstname} ${lastname}`, 50, 220)
+    .text(`${address}`, 50, 235)
+    .text(`${town}, ${postal_code}`, 50, 250)
+    .text(`${country}`, 50, 265);
+
+  const invoiceTableTop = 330;
+  generateTableRow(
+    doc,
+    invoiceTableTop,
+    "Produit/service",
+    "Prix €",
+    "Quantité",
+    "Prix HT",
+    "TVA %",
+    "Prix TTC"
+  );
+
+  generateHr(doc, invoiceTableTop + 20);
+
+  generateTableRow(
+    doc,
+    360,
+    name,
+    price.toFixed(2),
+    quantity,
+    (price * quantity).toFixed(2),
+    tva.toFixed(2),
+    totalPrice.toFixed(2)
+  );
+
+  if (type === "Devis") {
+    generateFooter(doc);
+  }
+
   doc.end();
 }
