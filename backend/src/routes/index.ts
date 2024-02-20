@@ -2,8 +2,7 @@ import { type Request, type Response } from "express";
 import { Router } from "express";
 import type Invoice from "../types/invoice";
 import * as invoiceModel from "../models/invoice";
-import { connection } from "../db-config";
-import { RowDataPacket } from "mysql2";
+import { buildPDF } from "../service/pdf-service";
 
 export const router = Router();
 
@@ -123,39 +122,22 @@ router.delete("/invoice/:id", async (req: Request, res: Response) => {
 });
 
 // GET PDF
-router.get("/download/:id", async (req: Request, res: Response) => {
-  try {
-    const invoiceId: number = Number(req.params.id);
+router.get("/invoice/download/:id", (req: Request, res: Response) => {
+  const invoiceId: number = Number(req.params.id);
+  invoiceModel.findOneInvoice(invoiceId, (error: Error, invoice: Invoice) => {
+    if (error) {
+      return res.status(500).json({ message: error.message });
+    }
 
-    // Requête pour récupérer les détails de la facture par son ID
-    const selectQuery = "SELECT pdf, name_file FROM invoice WHERE id = ?";
-    connection.query(selectQuery, [invoiceId], (error, results) => {
-      if (error) {
-        return res.status(500).json({ message: error.message });
-      }
-
-      // Assurez-vous que les résultats sont du type attendu
-      const rows = results as RowDataPacket[];
-
-      if (rows.length === 0) {
-        return res.status(404).json({ message: "Facture non trouvée" });
-      }
-
-      const invoiceDetails = rows[0];
-
-      // Récupérer les données du PDF et le nom du fichier depuis la base de données
-      const pdfBuffer = Buffer.from(invoiceDetails.pdf, "base64");
-      const fileName = invoiceDetails.name_file;
-
-      // Définir les en-têtes pour forcer le téléchargement du fichier
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
-
-      // Envoyer le contenu du PDF en réponse
-      res.status(200).send(pdfBuffer);
+    const stream = res.writeHead(200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment;filename=invoice.pdf`,
     });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+    buildPDF(
+      (chunk: any) => stream.write(chunk),
+      () => stream.end(),
+      invoice
+    );
+    // return res.status(200).json({ data: invoice });
+  });
 });

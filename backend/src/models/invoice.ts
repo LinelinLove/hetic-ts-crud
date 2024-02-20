@@ -63,7 +63,6 @@ export const findOneInvoice = (invoiceId: number, callback: Function) => {
     const invoice: Invoice = {
       id: row.id,
       type: row.type,
-      date: row.date,
       firstname: row.firstname,
       lastname: row.lastname,
       address: row.address,
@@ -74,6 +73,7 @@ export const findOneInvoice = (invoiceId: number, callback: Function) => {
       price: row.price,
       quantity: row.quantity,
       tva: row.tva,
+      date: row.date,
     };
     // on le renvoie au callback le résultat
     callback(null, invoice);
@@ -126,21 +126,6 @@ export const updateInvoice = (
   tva: number,
   callback: Function
 ) => {
-  // Construire le PDF
-  // const pdfFileName = `invoice_${id}.pdf`;
-  // const chunks: any[] = [];
-
-  // const stream = {
-  //   write: (chunk: any) => chunks.push(chunk),
-  //   end: () => {
-  //     // Construire le PDF une fois que tous les morceaux ont été reçus
-  //     const pdfBuffer = Buffer.concat(chunks);
-
-  //     // Sauvegarder le PDF
-  //     const pdfPath = `${pdfFileName}`;
-  //     fs.writeFileSync(pdfPath, pdfBuffer);
-
-  //     // Mettre à jour la base de données
   const updateQuery =
     "UPDATE invoice SET type = ?, firstname = ?, lastname = ?, address = ?, country = ?, town = ?, postal_code = ?, name = ?, price = ?, quantity = ?, tva = ? WHERE id = ?";
   connection.query(
@@ -168,25 +153,6 @@ export const updateInvoice = (
     }
   );
 };
-// };
-// Appeler votre fonction buildPDF avec le stream
-//   buildPDF(
-//     (chunk: any) => stream.write(chunk),
-//     () => stream.end(),
-//     id,
-//     type,
-//     firstname,
-//     lastname,
-//     address,
-//     country,
-//     town,
-//     postal_code,
-//     name,
-//     price,
-//     quantity,
-//     tva
-//   );
-// };
 
 export const deleteInvoice = (invoiceId: number, callback: Function) => {
   const queryString = "DELETE FROM invoice WHERE id = ?";
@@ -198,48 +164,3 @@ export const deleteInvoice = (invoiceId: number, callback: Function) => {
     callback(null);
   });
 };
-
-// const pdfFileName = `invoice_${inserId}.pdf`;
-
-// const chunks: any[] = [];
-
-// generation du pdf
-// const stream = {
-//   write: (chunk: any) => chunks.push(chunk),
-//   end: () => {
-//     // Construire le PDF une fois que tous les morceaux ont été reçus
-//     const pdfBuffer = Buffer.concat(chunks);
-//   },
-// };
-
-// // Appeler votre fonction buildPDF avec le stream
-// buildPDF(
-//   (chunk: any) => stream.write(chunk),
-//   () => {
-//     // Après que le PDF ait été entièrement créé et enregistré
-//     const pdfPath = `${pdfFileName}`;
-//     const pdfBuffer = Buffer.concat(chunks);
-//     fs.writeFileSync(pdfPath, pdfBuffer);
-//     // Mise à jour de la colonne pdf dans la base de données
-//     const updateQuery = "UPDATE invoice SET pdf = ? WHERE id = ?";
-//     connection.query(updateQuery, [pdfBuffer, inserId], (updateError) => {
-//       if (updateError) {
-//         callback(updateError);
-//       } else {
-//         callback(null, inserId);
-//       }
-//     });
-//   },
-//   inserId,
-//   type,
-//   firstname,
-//   lastname,
-//   address,
-//   country,
-//   town,
-//   postal_code,
-//   name,
-//   price,
-//   quantity,
-//   tva
-// );

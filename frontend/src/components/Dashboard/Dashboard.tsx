@@ -31,10 +31,15 @@ export default function Dashboard() {
 
   const handleDownload = async (id: number, type: string) => {
     try {
-      const response = await fetch(`http://localhost:5050/download/${id}`);
-      const blob = await response.blob();
+      const response = await fetch(
+        `http://localhost:5050/invoice/download/${id}`,
+        {
+          method: "GET",
+          mode: "cors",
+        }
+      );
 
-      // Manipulation du Blob
+      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

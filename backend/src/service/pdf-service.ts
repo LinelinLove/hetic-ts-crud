@@ -1,4 +1,5 @@
 import PDFDocument from "pdfkit";
+import Invoice from "../types/invoice";
 
 function subtotal(price: number, quantity: number, tva: number): number {
   const tvaPercent = Number(tva) / 100;
@@ -8,20 +9,9 @@ function subtotal(price: number, quantity: number, tva: number): number {
 export function buildPDF(
   dataCallback: any,
   endCallback: any,
-  id: number,
-  type: string,
-  firstname: string,
-  lastname: string,
-  address: string,
-  country: string,
-  town: string,
-  postal_code: number,
-  name: string,
-  price: number,
-  quantity: number,
-  tva: number
+  invoice: Invoice
 ) {
-  const totalPrice = subtotal(price, quantity, tva);
+  const totalPrice = subtotal(invoice.price, invoice.quantity, invoice.tva);
   const doc = new PDFDocument();
 
   function generateHr(doc: PDFKit.PDFDocument, y: number) {
@@ -48,7 +38,7 @@ export function buildPDF(
       .text(item, 50, y)
       .text(price, 170, y)
       .text(quantity, 200, y, { width: 90, align: "right" })
-      .text(price_ht, 250, y, { width: 90, align: "right" })
+      .text(price_ht, 270, y, { width: 90, align: "right" })
       .text(tva, 350, y, { width: 90, align: "right" })
       .text(price_ttc, 0, y, { align: "right" });
   }
@@ -73,19 +63,19 @@ export function buildPDF(
 
   doc
     .fontSize(24)
-    .text(`${type} n°${id}`, 50, 120)
+    .text(`${invoice.type} n°${invoice.id}`, 50, 120)
     .fontSize(12)
-    .text(`Date ${new Date().toLocaleString()}`, 50, 155);
+    .text(`${new Date().toLocaleString()}`, 50, 145);
 
-  generateHr(doc, 185);
+  generateHr(doc, 160);
 
-  doc.fontSize(16).text(`Informations du client`, 50, 200);
+  doc.fontSize(16).text(`Informations du client`, 50, 170);
   doc
     .fontSize(12)
-    .text(`${firstname} ${lastname}`, 50, 220)
-    .text(`${address}`, 50, 235)
-    .text(`${town}, ${postal_code}`, 50, 250)
-    .text(`${country}`, 50, 265);
+    .text(`${invoice.firstname} ${invoice.lastname}`, 50, 190)
+    .text(`${invoice.address}`, 50, 205)
+    .text(`${invoice.town}, ${invoice.postal_code}`, 50, 220)
+    .text(`${invoice.country}`, 50, 235);
 
   const invoiceTableTop = 330;
   generateTableRow(
@@ -99,20 +89,20 @@ export function buildPDF(
     "Prix TTC"
   );
 
-  generateHr(doc, invoiceTableTop + 20);
+  generateHr(doc, invoiceTableTop + 10);
 
   generateTableRow(
     doc,
-    360,
-    name,
-    price.toFixed(2),
-    quantity,
-    (price * quantity).toFixed(2),
-    tva.toFixed(2),
+    350,
+    invoice.name,
+    invoice.price.toFixed(2),
+    invoice.quantity,
+    (invoice.price * invoice.quantity).toFixed(2),
+    invoice.tva.toFixed(2),
     totalPrice.toFixed(2)
   );
 
-  if (type === "Devis") {
+  if (invoice.type === "Devis") {
     generateFooter(doc);
   }
 
