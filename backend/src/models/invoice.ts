@@ -5,7 +5,6 @@ import { buildPDF } from "../service/pdf-service";
 import fs from "fs";
 
 export const createInvoice = (
-  id: number,
   type: string,
   firstname: string,
   lastname: string,

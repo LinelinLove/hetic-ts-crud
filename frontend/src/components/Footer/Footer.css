@@ -1,4 +1,6 @@
 footer {
   align-self: end;
   text-align: center;
+  min-height: 40px;
+  padding: 10px;
 }

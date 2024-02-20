@@ -46,7 +46,6 @@ router.post("/invoices", async (req: Request, res: Response) => {
     const invoiceQuantity: number = Number(req.body.quantity);
     const invoiceTva: number = Number(req.body.tva);
     const invoicePdf: string = req.body.pdf;
-    const invoiceName_file: string = req.body.name_file;
 
     invoiceModel.createInvoice(
       invoiceId,

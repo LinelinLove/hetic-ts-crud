@@ -1,12 +1,26 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import "./Form.css";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import "./Form.css";
 
 export default function Form() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [result, setResult] = useState<any[]>([]);
+  const [formData, setFormData] = useState({
+    id: "",
+    type: "",
+    firstname: "",
+    lastname: "",
+    address: "",
+    country: "",
+    town: "",
+    postal_code: "",
+    name: "",
+    price: "",
+    quantity: "",
+    tva: "",
+    pdf: "",
+  });
 
   useEffect(() => {
     if (id) {
@@ -22,7 +36,7 @@ export default function Form() {
           }
 
           const data = await response.json();
-          setResult(data.data);
+          setFormData(data.data);
         } catch (error) {
           console.error(error);
         }
@@ -32,22 +46,23 @@ export default function Form() {
     }
   }, [id]);
 
-  const [formData, setFormData] = useState({
-    id: result ? result.id : "",
-    type: result ? result.type : "",
-    firstname: result ? result.firstname : "",
-    lastname: result ? result.lastname : "",
-    address: result ? result.address : "",
-    country: result ? result.country : "",
-    town: result ? result.town : "",
-    postal_code: result ? result.postal_code : "",
-    product: result ? result.name : "",
-    price: result ? result.price : "",
-    quantity: result ? result.quantity : "",
-    tva: result ? result.tva : "",
-    pdf: result ? result.pdf : "",
-    name_file: result ? result.name_file : "",
-  });
+  function checkForm(
+    postal_code: string,
+    price: string,
+    quantity: string,
+    tva: string
+  ): boolean {
+    if (
+      Number(postal_code) < 0 &&
+      Number(price) < 0 &&
+      Number(quantity) < 0 &&
+      Number(tva) < 0
+    ) {
+      alert("Les valeurs numériques doivent être supérieurs à zéro");
+      return false;
+    }
+    return true;
+  }
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -57,13 +72,24 @@ export default function Form() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const url = result.id
-      ? `http://localhost:5050/invoice/${result.id}`
+
+    if (
+      !checkForm(
+        formData.postal_code,
+        formData.price,
+        formData.quantity,
+        formData.tva
+      )
+    ) {
+      return;
+    }
+    const url = formData.id
+      ? `http://localhost:5050/invoice/${formData.id}`
       : "http://localhost:5050/invoices";
 
     try {
       const response = await fetch(url, {
-        method: result.id ? "PUT" : "POST",
+        method: formData.id ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -92,14 +118,14 @@ export default function Form() {
           <form id="form" onSubmit={handleSubmit}>
             <h4 className="mb-1">Type de document</h4>
             <div className="row">
-              <div className="col-md-5 mb-1">
+              <div className="mb-1">
                 <select
                   className="custom-select form-control"
                   id="type"
                   name="type"
                   required
                   onChange={handleChange}
-                  value={result ? result.type : ""}
+                  value={formData ? formData.type || "" : ""}
                 >
                   <option value="" disabled>
                     Choix du type
@@ -110,11 +136,11 @@ export default function Form() {
               </div>
             </div>
 
-            <hr className="mb-4" />
+            <hr />
 
             <h4 className="mb-1">Informations du client</h4>
             <div className="row">
-              <div className="col-md-6 mb-1">
+              <div className="mb-1">
                 <label htmlFor="firstName">Prénom</label>
                 <input
                   type="text"
@@ -123,11 +149,11 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="firstname"
-                  defaultValue={result ? result.firstname : ""}
+                  defaultValue={formData ? formData.firstname : ""}
                 />
               </div>
 
-              <div className="col-md-6 mb-1">
+              <div className="mb-1">
                 <label htmlFor="lastName">Nom</label>
                 <input
                   type="text"
@@ -136,7 +162,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="lastname"
-                  defaultValue={result ? result.lastname : ""}
+                  defaultValue={formData ? formData.lastname : ""}
                 />
               </div>
             </div>
@@ -150,12 +176,12 @@ export default function Form() {
                 required
                 onChange={handleChange}
                 name="address"
-                defaultValue={result ? result.address : ""}
+                defaultValue={formData ? formData.address : ""}
               />
             </div>
 
             <div className="row">
-              <div className="col-md-5 mb-1">
+              <div className=" mb-1">
                 <label htmlFor="country">Pays</label>
                 <input
                   type="text"
@@ -164,11 +190,11 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="country"
-                  defaultValue={result ? result.country : ""}
+                  defaultValue={formData ? formData.country : ""}
                 />
               </div>
 
-              <div className="col-md-4 mb-1">
+              <div className=" mb-1">
                 <label htmlFor="town">Commune</label>
                 <input
                   type="text"
@@ -177,11 +203,11 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="town"
-                  defaultValue={result ? result.town : ""}
+                  defaultValue={formData ? formData.town : ""}
                 />
               </div>
 
-              <div className="col-md-3 mb-1">
+              <div className=" mb-1">
                 <label htmlFor="postal_code">Code Postal</label>
                 <input
                   type="number"
@@ -190,7 +216,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="postal_code"
-                  defaultValue={result ? result.postal_code : ""}
+                  defaultValue={formData ? formData.postal_code : ""}
                 />
               </div>
             </div>
@@ -198,7 +224,7 @@ export default function Form() {
             <hr className="mb-4" />
             <h4 className="mb-1">Informations du produit /service</h4>
             <div className="row">
-              <div className="col-md-6 mb-1">
+              <div className="mb-1">
                 <label htmlFor="product">Nom du produit/service</label>
                 <input
                   type="text"
@@ -207,11 +233,11 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="name"
-                  defaultValue={result ? result.name : ""}
+                  defaultValue={formData ? formData.name : ""}
                 />
               </div>
 
-              <div className="col-md-2 mb-1">
+              <div className="mb-1">
                 <label htmlFor="price">Prix</label>
                 <input
                   type="number"
@@ -220,11 +246,11 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="price"
-                  defaultValue={result ? result.price : ""}
+                  defaultValue={formData ? formData.price : ""}
                 />
               </div>
 
-              <div className="col-md-2 mb-1">
+              <div className="mb-1">
                 <label htmlFor="quantity">Quantité</label>
                 <input
                   type="number"
@@ -233,11 +259,11 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="quantity"
-                  defaultValue={result ? result.quantity : ""}
+                  defaultValue={formData ? formData.quantity : ""}
                 />
               </div>
 
-              <div className="col-md-2 mb-1">
+              <div className="mb-1">
                 <label htmlFor="tva">TVA</label>
                 <input
                   type="number"
@@ -246,7 +272,7 @@ export default function Form() {
                   required
                   onChange={handleChange}
                   name="tva"
-                  defaultValue={result ? result.tva : ""}
+                  defaultValue={formData ? formData.tva : ""}
                 />
               </div>
             </div>
@@ -260,24 +286,18 @@ export default function Form() {
           </form>
         </div>
 
-        <div id="hiddenDiv" className="text-center invisible">
-          <div className="col-12 mt-5 mb-5">
-            <div className="card" id="document-container"></div>
-          </div>
-          <div className="btn-group" role="group" aria-label="Basic example">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              id="print"
-            ></button>
-          </div>
+        <div className="">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            id="print"
+          ></button>
         </div>
 
-        <div className="col-12 mt-5 mb-5 text-center">
+        <div className="">
           <Link to="/">
             <button className="btn btn-primary">Retour</button>
           </Link>
-          <div id="stored-data" className="card mt-5"></div>
         </div>
       </div>
     </>

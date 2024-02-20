@@ -1,5 +1,5 @@
 interface Invoice {
-  id: number;
+  id?: number;
   type: string;
   date: Date;
   firstname: string;

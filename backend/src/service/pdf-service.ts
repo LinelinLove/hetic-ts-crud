@@ -31,15 +31,13 @@ export function buildPDF(
   doc.fontSize(24).text(`${type} n°${id}`);
   doc.fontSize(12).text(`Date ${new Date().toLocaleString()}`);
   //
-  doc.fontSize(16).text(`Entreprise Nozama`);
-  doc.fontSize(12).text(`4 rue des champs de fleurs`);
-  doc.fontSize(12).text(`75003`);
-  doc.fontSize(12).text(`Tél : 01.43.66.66.66`);
+  doc.fontSize(16).text(`Entreprise Company`);
+  doc.fontSize(12).text(`4 rue Ipsum`);
+  doc.fontSize(12).text(`LOREM 00000`);
+  doc.fontSize(12).text(`Tél : 01.66.66.66.66`);
   //
   doc.fontSize(16).text(`Informations du client`, { align: "right" });
-  doc
-    .fontSize(14)
-    .text(`Monsieur/Madame ${firstname} ${lastname}`, { align: "right" });
+  doc.fontSize(14).text(`${firstname} ${lastname}`, { align: "right" });
   doc.fontSize(14).text(`${address}`, { align: "right" });
   doc.fontSize(14).text(`${postal_code}`, { align: "right" });
   doc.fontSize(14).text(`${town}`, { align: "right" });

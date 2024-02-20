@@ -22,12 +22,19 @@
   justify-content: center;
   align-items: center;
   gap: 60px;
-  padding: 0.25rem 0.5rem;
+  transition: all ease-in-out 0.2s;
+}
+.list:nth-child(n + 2) {
+  padding: 0.75rem 0.5rem;
+}
+
+.list:nth-child(n + 2):hover {
+  background-color: lightgray;
 }
 
 .title {
+  padding: 0.25rem 0.5rem;
   background-color: #424242 !important;
-  margin-bottom: 0.75rem;
 }
 
 .title p {
@@ -56,10 +63,17 @@
   }
 }
 
-@media screen and (max-width: 426px) {
+@media screen and (max-width: 600px) {
   .dashboard-container {
     padding: 20px 10px;
   }
+  .list {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+
+@media screen and (max-width: 426px) {
   .list {
     grid-template-columns: 1fr;
     gap: 10px;
