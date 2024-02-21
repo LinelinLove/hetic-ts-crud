@@ -1,50 +1,5 @@
 version: "3.8"
 
-# services:
-#   # invoice_app_db:
-#   #   image: mysql:latest
-#   #   env_file:
-#   #     - ./backend/.env
-#   #   networks:
-#   #     - invoice-app
-#   #   container_name: invoice_db
-#   #   restart: always
-#   #   environment:
-#   #     MYSQL_USER: DB_PASSWORD
-#   #     MYSQL_ROOT_PASSWORD: DB_PASSWORD
-#   #     MYSQL_PASSWORD: DB_PASSWORD
-#   #     MYSQL_DATABASE: DB_NAME
-#   #   ports:
-#   #     - "3310:3306"
-#   #   # volumes:
-#   #   #   - mysql-data:/var/lib/mysql
-#   #   logging:
-#   #     driver: none
-
-#   # invoice_backend:
-#   #   image: invoice_backend:local
-#   #   build:
-#   #     context: ./backend
-#   #     dockerfile: Dockerfile
-#   #   networks:
-#   #     - invoice-app
-#   #   restart: always
-#   #   ports:
-#   #     - "5050:5050"
-#   #   depends_on:
-#   #     - invoice_app_db
-#   #   links:
-#   #     - invoice_app_db
-#   #   env_file:
-#   #     - ./backend/.env
-#   #   environment:
-#   #     MYSQL_USER: DB_PASSWORD
-#   #     MYSQL_ROOT_PASSWORD: DB_PASSWORD
-#   #     MYSQL_PASSWORD: DB_PASSWORD
-#   #     MYSQL_DATABASE: DB_NAME
-#   #   volumes:
-#   #     - .:/usr/src/app
-
 services:
   invoice_frontend:
     build:
@@ -56,3 +11,44 @@ services:
     volumes:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
+    restart: always
+
+  invoice_app_db:
+    image: mysql:latest
+    env_file:
+      - ./backend/.env
+    container_name: invoice_db
+    restart: always
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: hetic
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    # logging:
+    #   driver: none
+
+  invoice_backend:
+    image: invoice_backend:local
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5050:5050"
+    depends_on:
+      - invoice_app_db
+    links:
+      - invoice_app_db
+    env_file:
+      - ./backend/.env
+    environment:
+      # MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: hetic
+    volumes:
+      - .:/usr/src/app
