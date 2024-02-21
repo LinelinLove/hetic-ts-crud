@@ -26,10 +26,13 @@ export default function Form() {
     if (id) {
       async function fetchData() {
         try {
-          const response = await fetch(`http://localhost:5050/invoice/${id}`, {
-            method: "GET",
-            mode: "cors",
-          });
+          const response = await fetch(
+            import.meta.env.VITE_REACT_APP_API_URL + `invoice/${id}`,
+            {
+              method: "GET",
+              mode: "cors",
+            }
+          );
 
           if (!response.ok) {
             throw new Error(`Request failed with status: ${response.status}`);
@@ -83,20 +86,21 @@ export default function Form() {
     ) {
       return;
     }
-    const url = formData.id
-      ? `http://localhost:5050/invoice/${formData.id}`
-      : "http://localhost:5050/invoices";
+    const url = formData.id ? `invoice/${formData.id}` : `invoices`;
     console.log(formData.id);
     try {
-      const response = await fetch(url, {
-        method: formData.id ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-        }),
-      });
+      const response = await fetch(
+        import.meta.env.VITE_REACT_APP_API_URL + url,
+        {
+          method: formData.id ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Request failed with status: ${response.status}`);

@@ -46,7 +46,7 @@ export function buildPDF(
   function generateFooter(doc: PDFKit.PDFDocument) {
     doc
       .fontSize(10)
-      .text("Le paiement est dû dans un délai de 15 jours.", 50, 780, {
+      .text("Le paiement est dû dans un délai de 15 jours.", 50, 700, {
         align: "center",
         width: 500,
       });

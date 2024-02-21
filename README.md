@@ -7,6 +7,7 @@
 - Vite ReactJS
 - PdfKit
 - MySQL
+- Docker
 
 # API REST
 
@@ -15,6 +16,10 @@
 ### /invoices
 
 Pour récupérer toutes les factures
+
+### /invoice/download/id
+
+Pour télécharger le PDF
 
 ### /invoice/:id
 

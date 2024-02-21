@@ -10,13 +10,18 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:5050/invoices", {
-          method: "GET",
-          mode: "cors",
-        });
+        const response = await fetch(
+          import.meta.env.VITE_REACT_APP_API_URL + `invoices`,
+          {
+            method: "GET",
+            mode: "cors",
+          }
+        );
 
         if (!response.ok) {
-          throw new Error(`Request failed with status: ${response.status}`);
+          throw new Error(
+            `Echech de la requête avec le statut : ${response.status}`
+          );
         }
 
         const data = await response.json();
@@ -32,13 +37,13 @@ export default function Dashboard() {
   const handleDownload = async (id: number, type: string) => {
     try {
       const response = await fetch(
-        `http://localhost:5050/invoice/download/${id}`,
+        // `http://localhost:5050/invoice/download/${id}`
+        import.meta.env.VITE_REACT_APP_API_URL + `invoice/download/${id}`,
         {
           method: "GET",
           mode: "cors",
         }
       );
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -55,14 +60,14 @@ export default function Dashboard() {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:5050/invoice/${id}`, {
+      const response = await fetch(`/invoice/${id}`, {
         method: "DELETE",
         mode: "cors",
       });
       const data = await response.json();
       console.log(data);
     } catch (error) {
-      console.error("Erreur lors du téléchargement du PDF :", error);
+      console.error("Erreur lors de la suppression de la facture :", error);
     }
   };
 
