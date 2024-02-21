@@ -25,23 +25,19 @@ services:
       MYSQL_PASSWORD: root
       MYSQL_DATABASE: hetic
     ports:
-      - "3310:3306"
+      - "3306:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
-    # logging:
-    #   driver: none
 
   invoice_backend:
-    image: invoice_backend:local
+    image: invoice_backend:dev
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      target: dev
     restart: always
     ports:
       - "5050:5050"
     depends_on:
-      - invoice_app_db
-    links:
       - invoice_app_db
     env_file:
       - ./backend/.env
@@ -51,4 +47,5 @@ services:
       MYSQL_PASSWORD: root
       MYSQL_DATABASE: hetic
     volumes:
-      - .:/usr/src/app
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
